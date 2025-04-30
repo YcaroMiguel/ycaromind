@@ -1,24 +1,30 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YcaroMind 1.5 - Chatbot Inteligente</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>YcaroMind 2.5</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <div id="chat-container">
-    <h1>YcaroMind 1.5</h1>
-    <div id="chatbox">
-      <div id="chat-output"></div>
+  <div class="top-bar">
+    <button onclick="toggleTheme()">Alternar Tema</button>
+    <div class="username">
+      <label for="username">Nome:</label>
+      <input type="text" id="username" placeholder="Seu nome" onchange="setUsername()">
     </div>
-    <input type="text" id="user-input" placeholder="Digite uma mensagem..." />
-    <button onclick="sendMessage()">Enviar</button>
   </div>
-
-  <script src="memory.js"></script>
+  <div class="container">
+    <header>
+      <h1>YcaroMind 2.5</h1>
+      <p>Assistente avançado criado por Ycaro</p>
+    </header>
+    <div class="chat-box" id="chat-output"></div>
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="Digite sua mensagem..." />
+      <button onclick="sendMessage()">Enviar</button>
+    </div>
+  </div>
   <script src="script.js"></script>
-
 </body>
 </html>

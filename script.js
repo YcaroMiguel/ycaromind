@@ -1,43 +1,80 @@
-let memory = [];
+let username = "Você";
+const chatOutput = document.getElementById("chat-output");
+
+function setUsername() {
+  const input = document.getElementById("username");
+  username = input.value || "Você";
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("light");
+}
 
 function sendMessage() {
-  const inputField = document.getElementById("user-input");
-  const userMessage = inputField.value.trim();
+  const input = document.getElementById("user-input");
+  const text = input.value.trim();
+  if (!text) return;
 
-  if (userMessage !== "") {
-    addMessage("Você: " + userMessage, "user");
-    inputField.value = "";
-    generateResponse(userMessage);
-  }
+  addMessage(`${username}: ${text}`, "user");
+  input.value = "";
+
+  setTimeout(() => {
+    addThinkingMessage();
+    setTimeout(() => {
+      removeThinkingMessage();
+      generateResponse(text);
+    }, 1200);
+  }, 300);
 }
 
-function addMessage(message, sender) {
-  const chatOutput = document.getElementById("chat-output");
-  const messageDiv = document.createElement("div");
-  messageDiv.classList.add(sender);
-  messageDiv.textContent = message;
-  chatOutput.appendChild(messageDiv);
-  chatOutput.scrollTop = chatOutput.scrollHeight; // Auto-scroll to bottom
+function addMessage(text, sender) {
+  const msg = document.createElement("div");
+  msg.className = `message ${sender}`;
+  msg.innerHTML = text;
+  chatOutput.appendChild(msg);
+  chatOutput.scrollTop = chatOutput.scrollHeight;
 }
 
-function generateResponse(userMessage) {
-  // Salvar a mensagem do usuário na memória
-  memory.push(userMessage);
+function addThinkingMessage() {
+  const msg = document.createElement("div");
+  msg.id = "thinking-msg";
+  msg.className = "message bot";
+  msg.textContent = "YcaroMind está pensando...";
+  chatOutput.appendChild(msg);
+  chatOutput.scrollTop = chatOutput.scrollHeight;
+}
 
-  let response = "Desculpe, não entendi isso.";
+function removeThinkingMessage() {
+  const msg = document.getElementById("thinking-msg");
+  if (msg) msg.remove();
+}
 
-  if (userMessage.toLowerCase().includes("olá") || userMessage.toLowerCase().includes("oi")) {
-    response = "Olá! Como posso ajudar você hoje?";
-  } else if (userMessage.toLowerCase().includes("como você está")) {
-    response = "Eu estou funcionando bem, obrigado por perguntar!";
-  } else if (userMessage.toLowerCase().includes("qual é o seu nome")) {
-    response = "Eu sou YcaroMind, seu assistente inteligente!";
-  } else if (userMessage.toLowerCase().includes("adeus") || userMessage.toLowerCase().includes("tchau")) {
-    response = "Tchau! Volte quando precisar de ajuda.";
-  } else if (userMessage.toLowerCase().includes("memória")) {
-    response = "Aqui estão as últimas mensagens que você me enviou: " + memory.join(", ");
+function generateResponse(input) {
+  let response = "";
+  const lower = input.toLowerCase();
+
+  // Reconhecimento de código
+  if (lower.startsWith("como escrever") || lower.includes("código")) {
+    response = `<pre>// Exemplo em JavaScript:
+function ola() {
+  console.log("Olá, mundo!");
+}</pre>`;
   }
 
-  // Adicionar a resposta à conversa
-  addMessage("YcaroMind: " + response, "bot");
+  // Respostas variadas
+  else if (lower.includes("oi") || lower.includes("olá")) {
+    response = `Olá, ${username}! Em que posso te ajudar?`;
+  }
+  else if (lower.includes("quem é você")) {
+    response = "Sou o YcaroMind 2.5, seu assistente virtual moderno!";
+  }
+  else if (lower.includes("como você funciona")) {
+    response = "Fui programado em HTML, CSS e JavaScript com lógica avançada e memória simulada.";
+  }
+  else {
+    // Simular resposta inteligente
+    response = `Interessante! Ainda estou aprendendo sobre "${input}", mas posso tentar ajudar!`;
+  }
+
+  addMessage(`YcaroMind: ${response}`, "bot");
 }

@@ -1,87 +1,43 @@
-let chatHistory = [];
-let conversationContext = {};  // Para armazenar o contexto da conversa
+let memory = [];
 
 function sendMessage() {
-  const input = document.getElementById('userInput');
-  const msg = input.value.trim();
-  if (!msg) return;
+  const inputField = document.getElementById("user-input");
+  const userMessage = inputField.value.trim();
 
-  // Adiciona a mensagem do usuário
-  addMessage(msg, 'user');
-  input.value = '';
-
-  // Delay para dar a sensação de "pensamento" do bot
-  setTimeout(() => {
-    // Resposta do bot após o "processamento"
-    const resposta = getBotResponse(msg);
-    addMessage(resposta, 'bot');
-  }, 1500);  // 1.5 segundos de delay para imitar o "pensamento" do bot
-}
-
-function addMessage(text, sender) {
-  const chatbox = document.getElementById('chatbox');
-  const message = document.createElement('div');
-  message.className = 'message ' + sender;
-  message.textContent = text;
-  chatbox.appendChild(message);
-  chatbox.scrollTop = chatbox.scrollHeight;
-
-  chatHistory.push({ sender, text });
-  saveHistory();
-}
-
-function getBotResponse(input) {
-  input = input.toLowerCase();
-
-  // Respostas personalizadas baseadas em palavras-chave
-  if (input.includes('oi') || input.includes('olá')) {
-    return 'Olá! Como posso ajudar você hoje?';
-  }
-  if (input.includes('tchau')) {
-    return 'Até logo! Volte sempre!';
-  }
-  if (input.includes('hora')) {
-    return 'A hora certa é ' + new Date().toLocaleTimeString();
-  }
-  if (input.includes('ajuda')) {
-    return 'Aqui estão algumas opções:\n1. Perguntar sobre a hora\n2. Dizer oi ou tchau\n3. Me fazer uma pergunta qualquer';
-  }
-
-  // Respostas inteligentes com armazenamento de contexto
-  if (input.includes('meu nome') || input.includes('qual é meu nome')) {
-    if (conversationContext.name) {
-      return `Seu nome é ${conversationContext.name}.`;
-    } else {
-      return 'Desculpe, não lembro do seu nome. Pode me dizer?';
-    }
-  }
-
-  if (input.includes('eu me chamo') && input.split(' ').length > 3) {
-    let name = input.split(' ').pop(); // Pegando o nome após "eu me chamo"
-    conversationContext.name = name;
-    return `Ótimo, prazer em te conhecer, ${name}! Vou lembrar disso.`;
-  }
-
-  // Respostas sem limite de perguntas e mais interatividade
-  if (input.includes('como vai')) {
-    return 'Estou ótimo, obrigado por perguntar! E você?';
-  }
-
-  // Caso não entenda, oferece sugestões
-  return 'Desculpe, não entendi. Precisa de ajuda? Tente perguntar sobre a hora, ou dizer oi!';
-}
-
-function saveHistory() {
-  localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-}
-
-function loadHistory() {
-  const storedHistory = JSON.parse(localStorage.getItem('chatHistory'));
-  if (storedHistory) {
-    chatHistory = storedHistory;
-    chatHistory.forEach(entry => addMessage(entry.text, entry.sender));
+  if (userMessage !== "") {
+    addMessage("Você: " + userMessage, "user");
+    inputField.value = "";
+    generateResponse(userMessage);
   }
 }
 
-// Carregar o histórico de mensagens ao iniciar
-window.onload = loadHistory;
+function addMessage(message, sender) {
+  const chatOutput = document.getElementById("chat-output");
+  const messageDiv = document.createElement("div");
+  messageDiv.classList.add(sender);
+  messageDiv.textContent = message;
+  chatOutput.appendChild(messageDiv);
+  chatOutput.scrollTop = chatOutput.scrollHeight; // Auto-scroll to bottom
+}
+
+function generateResponse(userMessage) {
+  // Salvar a mensagem do usuário na memória
+  memory.push(userMessage);
+
+  let response = "Desculpe, não entendi isso.";
+
+  if (userMessage.toLowerCase().includes("olá") || userMessage.toLowerCase().includes("oi")) {
+    response = "Olá! Como posso ajudar você hoje?";
+  } else if (userMessage.toLowerCase().includes("como você está")) {
+    response = "Eu estou funcionando bem, obrigado por perguntar!";
+  } else if (userMessage.toLowerCase().includes("qual é o seu nome")) {
+    response = "Eu sou YcaroMind, seu assistente inteligente!";
+  } else if (userMessage.toLowerCase().includes("adeus") || userMessage.toLowerCase().includes("tchau")) {
+    response = "Tchau! Volte quando precisar de ajuda.";
+  } else if (userMessage.toLowerCase().includes("memória")) {
+    response = "Aqui estão as últimas mensagens que você me enviou: " + memory.join(", ");
+  }
+
+  // Adicionar a resposta à conversa
+  addMessage("YcaroMind: " + response, "bot");
+}

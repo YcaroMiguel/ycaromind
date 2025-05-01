@@ -1,143 +1,133 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-*{
-    font-family: 'Poppins', sans-serif;
+* {
+  font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
 }
 
-body{
-    margin: 0;
-    padding: 0;
-    background-color: #343541;
+body {
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-.header{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ccc;
-    border-bottom: 1px solid #5c5c66;
-    height: 45px;
+/* Modo Claro */
+body.light {
+  background-color: #f4f4f4;
+  color: #222;
 }
 
-.header h3{
-    font-size: 17px;
-    font-weight: 500;
+/* Modo Escuro */
+body.dark {
+  background-color: #343541;
+  color: #ccc;
 }
 
-.container{
-    max-width: 920px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin: 0 auto;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid #5c5c66;
 }
 
-.info{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 20;
+.header h3 {
+  font-size: 18px;
 }
 
-.info a{
-    color: #fff;
-    text-decoration: none;
-    font-size: 25px;
-    font-weight: bold;
-    transition: all 0.3s ease;
+#toggle-theme {
+  padding: 6px 10px;
+  font-size: 16px;
+  background: none;
+  border: 1px solid #5c5c66;
+  border-radius: 5px;
+  color: inherit;
+  cursor: pointer;
 }
 
-.info a:hover{
-    color: #4caf50;
+.container {
+  max-width: 920px;
+  height: calc(100vh - 45px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: auto;
 }
 
-.input-container{
-    background-color: #343541;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    border-top: 1px solid #5c5c66;
-    position: sticky;
-    bottom: 0;
+.chat-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
 }
 
-#user-input{
-    background-color: #40414f;
-    color: #fff;
-    border: none;
-    outline: none;
-    padding: 8px;
-    flex: 9;
-    font-size: 14px;
-    font-weight: 400;
-    border-radius: 5px;
+.chat-box {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
-#user-input::placeholder{
-    color: #8e8e8e;
-    font-weight: 400;
+.icon {
+  margin-right: 10px;
 }
 
-#send-button{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #4caf50;
-    color: #fff;
-    cursor: pointer;
-    margin-left: 15px;
-    transition: all 0.3s ease;
+.chat-box .bot,
+.chat-box .user {
+  background-color: rgba(0,0,0,0.1);
+  padding: 10px 15px;
+  border-radius: 8px;
+  flex: 1;
 }
 
-#send-button:hover{
-    background-color: #388e3c;
+.bot {
+  background-color: #444654;
+  color: #eee;
 }
 
-.chat-container{
-    flex: 1;
+.user {
+  background-color: #19c37d;
+  color: #fff;
 }
 
-.chat-box{
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
+#chat-log i {
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #9859b7;
 }
 
-#chat-log{
-    margin-bottom: 10px;
-    font-size: 14px;
-    line-height: 1.6;
+.input-container {
+  background-color: inherit;
+  border-top: 1px solid #5c5c66;
+  padding: 10px;
+  display: flex;
 }
 
-#chat-log i{
-    margin-right: 10px;
-    color: #fff;
-    border-radius: 5px;
+#user-input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background-color: #40414f;
+  color: #fff;
 }
 
-.bot, .user{
-    display: flex;
-    align-items: flex-start;
-    color: #eee;
-    width: 100%;
-    padding: 15px 7px 15px 10px;
-    border-radius: 6px;
+body.light #user-input {
+  background-color: #e2e2e2;
+  color: #000;
 }
 
-.bot{
-    background-color: #444654;
+#send-button {
+  margin-left: 10px;
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-#chat-log #user-icon i{
-    background-color: #19c37d;
-    padding: 10px 11px;
-}
-
-#chat-log #bot-icon i{
-    background-color: #9859b7;
-    padding: 10px 8px 11px;
+#send-button:hover {
+  background-color: #388e3c;
 }

@@ -1,8 +1,8 @@
-const chatLog = document.getElementById('chat-log'),
-    userInput = document.getElementById('user-input'),
-    sendButton = document.getElementById('send-button'),
-    buttonIcon = document.getElementById('button-icon'),
-    info = document.querySelector('.info');
+const chatLog = document.getElementById('chat-log');
+const userInput = document.getElementById('user-input');
+const sendButton = document.getElementById('send-button');
+const buttonIcon = document.getElementById('button-icon');
+const info = document.querySelector('.info');
 
 sendButton.addEventListener('click', sendMessage);
 userInput.addEventListener('keydown', (event) => {
@@ -13,67 +13,19 @@ userInput.addEventListener('keydown', (event) => {
 
 function sendMessage() {
     const message = userInput.value.trim();
-    // if message = empty do nothing
-    if (message === '') {
-        return;
-    }
-    // if message = developer - show our message
-    else if (message === 'developer') {
-        // clear input value
-        userInput.value = '';
-        // append message as user - we will code it's function
-        appendMessage('user', message);
-        // sets a fake timeout that showing loading on send button
-        setTimeout(() => {
-            // send our message as bot(sender : bot)
-            appendMessage('bot', 'Fui criado por Ycaro Miguel com muito carinho e dedicação');
-            // change button icon to default
-            buttonIcon.classList.add('fa-solid', 'fa-paper-plane');
-            buttonIcon.classList.remove('fas', 'fa-spinner', 'fa-pulse');
-        }, 2000);
-        return;
-    }
+    if (message === '') return;
 
-    // else if none of above
-    // appends users message to screen
     appendMessage('user', message);
     userInput.value = '';
 
-    const url = 'https://deepseek-v31.p.rapidapi.com/';
-const options = {
-	method: 'POST',
-	headers: {
-		'x-rapidapi-key': '7e4f5a0f7fmsh9b0a8baa11636bdp15acc4jsn6ea3ede3dd13',
-		'x-rapidapi-host': 'deepseek-v31.p.rapidapi.com',
-		'Content-Type': 'application/json'
-	},
-	body: {
-		model: 'deepseek-v3',
-		messages: [
-			{
-				role: 'user',
-				content: 'There are ten birds in a tree. A hunter shoots one. How many are left in the tree?'
-			}
-		]
-	}
-};
+    buttonIcon.classList.remove('fa-paper-plane');
+    buttonIcon.classList.add('fa-spinner', 'fa-pulse');
 
-        buttonIcon.classList.add('fa-solid', 'fa-paper-plane');
-        buttonIcon.classList.remove('fas', 'fa-spinner', 'fa-pulse');
-    }).catch((err) => {
-        if (err.name === 'TypeError') {
-            appendMessage('bot', 'Error : Check Your Api Key!');
-            buttonIcon.classList.add('fa-solid', 'fa-paper-plane');
-            buttonIcon.classList.remove('fas', 'fa-spinner', 'fa-pulse');
-        }
-    });
+    callDeepSeekAPI(message);
 }
 
 function appendMessage(sender, message) {
     info.style.display = "none";
-    // change send button icon to loading using fontawesome
-    buttonIcon.classList.remove('fa-solid', 'fa-paper-plane');
-    buttonIcon.classList.add('fas', 'fa-spinner', 'fa-pulse');
 
     const messageElement = document.createElement('div');
     const iconElement = document.createElement('div');
@@ -85,7 +37,6 @@ function appendMessage(sender, message) {
     messageElement.classList.add(sender);
     messageElement.innerText = message;
 
-    // add icons depending on who send message bot or user
     if (sender === 'user') {
         icon.classList.add('fa-regular', 'fa-user');
         iconElement.setAttribute('id', 'user-icon');
@@ -98,6 +49,41 @@ function appendMessage(sender, message) {
     chatElement.appendChild(iconElement);
     chatElement.appendChild(messageElement);
     chatLog.appendChild(chatElement);
-    chatLog.scrollTo = chatLog.scrollHeight;
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
 
+async function callDeepSeekAPI(userMessage) {
+    const url = 'https://deepseek-v31.p.rapidapi.com/';
+    const options = {
+        method: 'POST',
+        headers: {
+            'x-rapidapi-key': '7e4f5a0f7fmsh9b0a8baa11636bdp15acc4jsn6ea3ede3dd13',
+            'x-rapidapi-host': 'deepseek-v31.p.rapidapi.com',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            model: 'deepseek-v3',
+            messages: [
+                {
+                    role: 'user',
+                    content: userMessage
+                }
+            ]
+        })
+    };
+
+    try {
+        const response = await fetch(url, options);
+        const result = await response.json();
+
+        const reply = result?.choices?.[0]?.message?.content || "Desculpe, não consegui responder agora.";
+        appendMessage('bot', reply);
+
+    } catch (error) {
+        console.error(error);
+        appendMessage('bot', '❌ Erro ao acessar a API. Verifique a chave ou conexão.');
+    } finally {
+        buttonIcon.classList.remove('fa-spinner', 'fa-pulse');
+        buttonIcon.classList.add('fa-paper-plane');
+    }
 }

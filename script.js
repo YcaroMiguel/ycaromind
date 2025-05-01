@@ -1,80 +1,103 @@
-let username = "Você";
-const chatOutput = document.getElementById("chat-output");
+const chatLog = document.getElementById('chat-log'),
+    userInput = document.getElementById('user-input'),
+    sendButton = document.getElementById('send-button'),
+    buttonIcon = document.getElementById('button-icon'),
+    info = document.querySelector('.info');
 
-function setUsername() {
-  const input = document.getElementById("username");
-  username = input.value || "Você";
-}
-
-function toggleTheme() {
-  document.body.classList.toggle("light");
-}
+sendButton.addEventListener('click', sendMessage);
+userInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
+});
 
 function sendMessage() {
-  const input = document.getElementById("user-input");
-  const text = input.value.trim();
-  if (!text) return;
+    const message = userInput.value.trim();
+    // if message = empty do nothing
+    if (message === '') {
+        return;
+    }
+    // if message = developer - show our message
+    else if (message === 'developer') {
+        // clear input value
+        userInput.value = '';
+        // append message as user - we will code it's function
+        appendMessage('user', message);
+        // sets a fake timeout that showing loading on send button
+        setTimeout(() => {
+            // send our message as bot(sender : bot)
+            appendMessage('bot', 'Fui criado por Ycaro Miguel com muito carinho e dedicação');
+            // change button icon to default
+            buttonIcon.classList.add('fa-solid', 'fa-paper-plane');
+            buttonIcon.classList.remove('fas', 'fa-spinner', 'fa-pulse');
+        }, 2000);
+        return;
+    }
 
-  addMessage(`${username}: ${text}`, "user");
-  input.value = "";
+    // else if none of above
+    // appends users message to screen
+    appendMessage('user', message);
+    userInput.value = '';
 
-  setTimeout(() => {
-    addThinkingMessage();
-    setTimeout(() => {
-      removeThinkingMessage();
-      generateResponse(text);
-    }, 1200);
-  }, 300);
+    const url = 'https://deepseek-v31.p.rapidapi.com/';
+const options = {
+	method: 'POST',
+	headers: {
+		'x-rapidapi-key': '7e4f5a0f7fmsh9b0a8baa11636bdp15acc4jsn6ea3ede3dd13',
+		'x-rapidapi-host': 'deepseek-v31.p.rapidapi.com',
+		'Content-Type': 'application/json'
+	},
+	body: {
+		model: 'deepseek-v3',
+		messages: [
+			{
+				role: 'user',
+				content: 'There are ten birds in a tree. A hunter shoots one. How many are left in the tree?'
+			}
+		]
+	}
+};
+
+        buttonIcon.classList.add('fa-solid', 'fa-paper-plane');
+        buttonIcon.classList.remove('fas', 'fa-spinner', 'fa-pulse');
+    }).catch((err) => {
+        if (err.name === 'TypeError') {
+            appendMessage('bot', 'Error : Check Your Api Key!');
+            buttonIcon.classList.add('fa-solid', 'fa-paper-plane');
+            buttonIcon.classList.remove('fas', 'fa-spinner', 'fa-pulse');
+        }
+    });
 }
 
-function addMessage(text, sender) {
-  const msg = document.createElement("div");
-  msg.className = `message ${sender}`;
-  msg.innerHTML = text;
-  chatOutput.appendChild(msg);
-  chatOutput.scrollTop = chatOutput.scrollHeight;
-}
+function appendMessage(sender, message) {
+    info.style.display = "none";
+    // change send button icon to loading using fontawesome
+    buttonIcon.classList.remove('fa-solid', 'fa-paper-plane');
+    buttonIcon.classList.add('fas', 'fa-spinner', 'fa-pulse');
 
-function addThinkingMessage() {
-  const msg = document.createElement("div");
-  msg.id = "thinking-msg";
-  msg.className = "message bot";
-  msg.textContent = "YcaroMind está pensando...";
-  chatOutput.appendChild(msg);
-  chatOutput.scrollTop = chatOutput.scrollHeight;
-}
+    const messageElement = document.createElement('div');
+    const iconElement = document.createElement('div');
+    const chatElement = document.createElement('div');
+    const icon = document.createElement('i');
 
-function removeThinkingMessage() {
-  const msg = document.getElementById("thinking-msg");
-  if (msg) msg.remove();
-}
+    chatElement.classList.add("chat-box");
+    iconElement.classList.add("icon");
+    messageElement.classList.add(sender);
+    messageElement.innerText = message;
 
-function generateResponse(input) {
-  let response = "";
-  const lower = input.toLowerCase();
+    // add icons depending on who send message bot or user
+    if (sender === 'user') {
+        icon.classList.add('fa-regular', 'fa-user');
+        iconElement.setAttribute('id', 'user-icon');
+    } else {
+        icon.classList.add('fa-solid', 'fa-robot');
+        iconElement.setAttribute('id', 'bot-icon');
+    }
 
-  // Reconhecimento de código
-  if (lower.startsWith("como escrever") || lower.includes("código")) {
-    response = `<pre>// Exemplo em JavaScript:
-function ola() {
-  console.log("Olá, mundo!");
-}</pre>`;
-  }
+    iconElement.appendChild(icon);
+    chatElement.appendChild(iconElement);
+    chatElement.appendChild(messageElement);
+    chatLog.appendChild(chatElement);
+    chatLog.scrollTo = chatLog.scrollHeight;
 
-  // Respostas variadas
-  else if (lower.includes("oi") || lower.includes("olá")) {
-    response = `Olá, ${username}! Em que posso te ajudar?`;
-  }
-  else if (lower.includes("quem é você")) {
-    response = "Sou o YcaroMind 2.5, seu assistente virtual moderno!";
-  }
-  else if (lower.includes("como você funciona")) {
-    response = "Fui programado em HTML, CSS e JavaScript com lógica avançada e memória simulada.";
-  }
-  else {
-    // Simular resposta inteligente
-    response = `Interessante! Ainda estou aprendendo sobre "${input}", mas posso tentar ajudar!`;
-  }
-
-  addMessage(`YcaroMind: ${response}`, "bot");
 }

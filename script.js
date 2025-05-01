@@ -3,6 +3,16 @@ const userInput = document.getElementById('user-input');
 const sendButton = document.getElementById('send-button');
 const buttonIcon = document.getElementById('button-icon');
 const info = document.querySelector('.info');
+const themeToggle = document.getElementById('toggle-theme');
+const body = document.body;
+
+// Alternar modo claro/escuro
+themeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark');
+    body.classList.toggle('light');
+    const isDark = body.classList.contains('dark');
+    themeToggle.innerHTML = `<i class="fas fa-${isDark ? 'moon' : 'sun'}"></i>`;
+});
 
 sendButton.addEventListener('click', sendMessage);
 userInput.addEventListener('keydown', (event) => {
